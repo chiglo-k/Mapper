@@ -1,0 +1,3 @@
+['SQL']
+
+db_dta = "mysql+mysqlconnector://admin:test@localhost:3306/bd"

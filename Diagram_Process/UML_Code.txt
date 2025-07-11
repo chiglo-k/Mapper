@@ -1,0 +1,76 @@
+@startuml
+
+skinparam class {
+    BackgroundColor<<Data>> #Crimson
+    BackgroundColor<<WebApp>> #Gold
+    BackgroundColor<<Process>> #CornflowerBlue
+    BackgroundColor<<Storage>> #MediumSeaGreen
+    BorderColor<<Storage>> #MediumSeaGreen
+}
+
+class S3_Storage <<Data>> {
+}
+
+class Local_Storage <<Data>> {
+}
+
+class Rest_Api <<Data>> {
+}
+
+class Streamlit <<WebApp>> {
+    + Загрузка файлов
+    + Настройка маппинга
+    + Управление проектами
+    + Сохранение данных проекта
+}
+
+class LoadFiles <<Process>> {
+    + Загрузка Файлов
+}
+
+class ParserFile <<Process>> {
+    + Типы файлов
+    -- CSV
+    -- JSON
+    -- XLSX
+}
+
+class Mapping <<Process>> {
+    + Маппер
+}
+
+class Project_Data <<Data>> {
+    Метаданные проекта
+}
+
+class SQL <<Storage>> {
+    + Метаданные проектов
+    + Хранение данных настроек маппинга по проектам в SQL
+}
+
+class Validator <<Process>> {
+    + Сопоставление качества
+}
+
+class Send_Data <<Process>> {
+    + Данные проекта
+}
+
+
+S3_Storage --> Streamlit: APIKey, SecretKey
+Rest_Api --> Streamlit: ApiToken
+Local_Storage --> Streamlit: PathDirectory
+
+Streamlit --> LoadFiles
+Streamlit --> ParserFile: Предобработка файлов
+Streamlit --> Project_Data: Создание проектов
+Project_Data --> SQL: Данные проектов
+LoadFiles --> ParserFile
+
+ParserFile --> Mapping: Передача предобработанных файлов для сопоставления названия колонок
+Mapping --> Validator
+Mapping --> SQL: Конфигурация проекта
+Mapping --> Send_Data: Отправка данных проекта в формате JSON
+Validator --> Send_Data
+
+@enduml
